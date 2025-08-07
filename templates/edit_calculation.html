@@ -294,6 +294,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         result = inputs.reduce((a, b, i) => i === 0 ? a : a / b, inputs[0]);
         break;
+
+      // a → Accumulator (result carried through each step)
+      // b → Current element from the array
+      // i → Index of the current element
+      case 'exponentiation':
+        result = inputs.reduce((a, b, i) => i === 0 ? a : a ** b, inputs[0]);
+        break;
       default:
         return 'Unknown operation';
     }
@@ -329,6 +336,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
       case 'division':
         operator = '÷';
+        break;
+      case 'exponentiation':
+        operator = '**';
         break;
       default:
         operator = '?';
