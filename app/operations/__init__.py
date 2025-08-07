@@ -118,3 +118,25 @@ def divide(a: Number, b: Number) -> float:
     # Perform division of a by b and return the result as a float
     result = a / b
     return result
+
+def exponent(a: Number, b: Number) -> float:
+    """
+    Raise the first number to the exponent of the second number
+    and return the result
+
+    Parameters:
+    - a (int or float): The first number
+    - b (int or float): The second number (exponent)
+
+    Returns:
+    - int or float: The exponentiation of a and b.
+
+    Example:
+    >>> exponent(2, 3)
+    8
+    >>> exponent(2.5, 4)
+    39.0625
+    """
+    # Perform exponentiation of a and b
+    result = a ** b
+    return result
