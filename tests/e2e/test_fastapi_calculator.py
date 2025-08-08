@@ -288,6 +288,31 @@ def test_list_get_update_delete_calculation(base_url: str):
     get_response_after_delete = requests.get(get_url, headers=headers)
     assert get_response_after_delete.status_code == 404, "Expected 404 after deletion"
 
+# simulating creating an exponentiation calculation
+def test_create_calculation_exponentiation(base_url: str):
+    user_data = {
+        "first_name": "Mr",
+        "last_name": "Exponent",
+        "email": f"Exponent{uuid4()}@example.com",
+        "username": f"exponent_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "exponentiation",
+        "inputs": [3, 2, 2],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 201, f"Exponent calculation creation failed: {response.text}"
+    data = response.json()
+    # Expected result: 3 ^ 2 ^ 2 = 81
+    assert "result" in data and data["result"] == 81, f"Expected result 81, got {data.get('result')}"
+
 # ---------------------------------------------------------------------------
 # Direct Model Tests for Calculation Operations
 # ---------------------------------------------------------------------------
@@ -319,6 +344,17 @@ def test_model_division():
     with pytest.raises(ValueError):
         calc_zero = Calculation.create("division", dummy_user_id, [100, 0])
         calc_zero.get_result()
+
+# Tests the factory method and polymorphism through the Calculation.create(...) call.
+# @classmethod def create (calculation.py)
+# Dynamically create an Exponentiation instance (because "exponentiation" is passed in)
+# Checks only the result (81).
+def test_model_exponentiation():
+    dummy_user_id = uuid4()
+    calc = Calculation.create("exponentiation", dummy_user_id, [3, 2, 2])
+    result = calc.get_result()
+    assert result == 81, f"Exponentiation result incorrect: expected 81, got {result}"
+
 
 # ---------------------------------------------------------------------------
 # Positive Playwright tests
