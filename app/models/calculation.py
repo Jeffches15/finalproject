@@ -178,7 +178,8 @@ class AbstractCalculation:
             'subtraction': Subtraction,
             'multiplication': Multiplication,
             'division': Division,
-            'exponentiation': Exponentiation
+            'exponentiation': Exponentiation,
+            'root': Root
         }
         calculation_class = calculation_classes.get(calculation_type.lower())
         if not calculation_class:
@@ -379,8 +380,7 @@ class Exponentiation(Calculation):
             float: The result of the exponentiation sequence
             
         Raises:
-            ValueError: If inputs are not a list, if fewer than 2 numbers provided,
-                        or if attempting to divide by zero
+            ValueError: If inputs are not a list, if fewer than 2 numbers provided
         """
 
         if not isinstance(self.inputs, list):
@@ -390,4 +390,46 @@ class Exponentiation(Calculation):
         result = self.inputs[0]
         for value in self.inputs[1:]:
             result **= value
+        return result
+
+class Root(Calculation):
+    """
+    Root class implementation.
+
+    Handles sequential root extraction starting from the first number.
+    Each subsequent number is used as the degree of the root applied to the result.
+
+    Examples:
+        [64, 2, 3] -> cube root of (square root of 64) = ∛(√64) = ∛8 = 2
+        [81, 4]    -> 4th root of 81 = 3
+    """
+
+    __mapper_args__ = {"polymorphic_identity": "root"}
+
+    def get_result(self) -> float:
+        """
+        Calculate the result of taking the root of the first value by all subsequent values.
+
+        Takes the first number and applies each remaining number as the degree of the root
+        sequentially (left to right).
+
+        Returns:
+            float: The result of the root extraction sequence
+
+        Raises:
+            ValueError: If inputs are not a list, or if fewer than 2 numbers are provided,
+                taking root of negative number, and zero root
+        """
+
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 2:
+            raise ValueError("Inputs must be a list with at least two numbers.")
+        result = self.inputs[0]
+        for value in self.inputs[1:]:
+            if value == 0:
+                raise ValueError("Cannot take zeroth root.")
+            elif value < 0:
+                raise ValueError("Cannot take root with a negative degree.")
+            result = result ** (1 / value)
         return result
