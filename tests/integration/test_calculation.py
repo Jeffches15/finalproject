@@ -4,6 +4,7 @@ import uuid
 from app.models.calculation import (
     Calculation,
     Addition,
+    Exponentiation,
     Subtraction,
     Multiplication,
     Division,
@@ -59,6 +60,36 @@ def test_division_by_zero():
     division = Division(user_id=dummy_user_id(), inputs=inputs)
     with pytest.raises(ValueError, match="Cannot divide by zero."):
         division.get_result()
+
+# tests Exponentiation class method: Exponentiation.get_result()
+# references calculation.py
+def test_exponentiation_get_result():
+    """
+    Test that Exponentiation.get_result returns the correct result
+    """
+    inputs = [4, 2, 2]
+    exponentiation = Exponentiation(user_id=dummy_user_id(), inputs=inputs)
+
+    # Expected: 4 ^ 2 ^ 2 = 64
+    result = exponentiation.get_result()
+    assert result == 256, f"Expected 256, got {result}"
+
+# if not isinstance(self.inputs, list):
+            # raise ValueError("Inputs must be a list of numbers.")
+def test_exponentiation_raises_if_inputs_not_list():
+    exp = Exponentiation()
+    exp.inputs = 5  # Not a list
+    with pytest.raises(ValueError, match="Inputs must be a list of numbers."):
+        exp.get_result()
+
+# if len(self.inputs) < 2:
+            # raise ValueError("Inputs must be a list with at least two numbers.")    
+def test_exponentiation_raises_if_less_than_two_inputs():
+    exp = Exponentiation()
+    exp.inputs = [2]  # Only one number
+    with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
+        exp.get_result()
+
 
 def test_calculation_factory_addition():
     """
@@ -116,6 +147,24 @@ def test_calculation_factory_division():
     assert isinstance(calc, Division), "Factory did not return a Division instance."
     assert calc.get_result() == 10, "Incorrect division result."
 
+# Checks both:
+    # That the returned object is an instance of Exponentiation.
+    # That the result is correct (625).
+def test_calculation_factory_exponent():
+    """
+    Test the Calculation.create factory method for exponentiation.
+    """
+    inputs = [5, 2, 2]
+    calc = Calculation.create(
+        calculation_type='exponentiation',
+        user_id=dummy_user_id(),
+        inputs=inputs,
+    )
+    # Expected: 5 ^ 2 ^ 2 = 625
+    assert isinstance(calc, Exponentiation), "Factory did not return a Exponentiation instance."
+    assert calc.get_result() == 625, "Incorrect exponentiation result."
+    
+
 def test_calculation_factory_invalid_type():
     """
     Test that Calculation.create raises a ValueError for an unsupported calculation type.
@@ -150,3 +199,11 @@ def test_invalid_inputs_for_division():
     division = Division(user_id=dummy_user_id(), inputs=[10])
     with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
         division.get_result()
+
+def test_invalid_inputs_for_exponentiation():
+    """
+    Test that providing fewer than two numbers to Exponentiation.get_result raises a ValueError.
+    """
+    exponentiation = Exponentiation(user_id=dummy_user_id(), inputs=[10])
+    with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
+        exponentiation.get_result()
