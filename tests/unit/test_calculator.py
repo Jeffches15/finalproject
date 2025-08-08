@@ -2,7 +2,7 @@
 
 import pytest  # Import the pytest framework for writing and running tests
 from typing import Union  # Import Union for type hinting multiple possible types
-from app.operations import add, subtract, multiply, divide  # Import the calculator functions from the operations module
+from app.operations import add, exponent, subtract, multiply, divide  # Import the calculator functions from the operations module
 
 # Define a type alias for numbers that can be either int or float
 Number = Union[int, float]
@@ -232,3 +232,59 @@ def test_divide_by_zero() -> None:
     # Assert that the exception message contains the expected error message
     assert "Cannot divide by zero!" in str(excinfo.value), \
         f"Expected error message 'Cannot divide by zero!', but got '{excinfo.value}'"
+
+ 
+# Tests the standalone function in operations.py: def exponent 
+    # result = a ** b
+    # return result
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (2, 3, 8),               # 2^3 = 8, positive integers
+        (5, 0, 1),               # any number to power 0 is 1
+        (4, 0.5, 2.0),           # square root of 4
+        (-2, 3, -8),             # negative base, odd exponent
+        (-2, 2, 4),              # negative base, even exponent
+        (9.0, 0.5, 3.0),         # float base, fractional exponent (square root)
+        (10, -1, 0.1),           # negative exponent
+        (0, 5, 0),               # zero base, positive exponent
+        (0, 0, 1),               # zero to zero power (by convention)
+    ],
+    ids=[
+        "pos_int_exp",
+        "power_zero",
+        "fractional_exp",
+        "neg_base_odd_exp",
+        "neg_base_even_exp",
+        "float_base_fractional_exp",
+        "neg_exp",
+        "zero_base_pos_exp",
+        "zero_base_zero_exp",
+    ]
+)
+def test_exponentiation(a: Number, b: Number, expected: Number) -> None:
+    """
+    Test the 'exponent' function in operations.py
+
+    This parameterized test checks that the 'exponent' function correctly computes
+    the power of a number, including positive, negative, zero, integer, and float values.
+
+    Parameters:
+    - a (Number): The base number.
+    - b (Number): The exponent.
+    - expected (Number): The expected result of exponentiation.
+
+    Steps:
+    1. Call 'exponent(a, b)'.
+    2. Assert the result matches 'expected'.
+
+    Example:
+    >>> test_exponentiation(2, 3, 8)
+    >>> test_exponentiation(-2, 2, 4)
+    """
+
+    # Call the 'exponent' function with the provided arguments
+    result = exponent(a, b)
+    
+    # Assert that the result of exponent(a, b) matches the expected value
+    assert result == expected, f"Expected exponent({a}, {b}) to be {expected}, but got {result}"
