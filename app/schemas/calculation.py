@@ -132,6 +132,15 @@ class CalculationBase(BaseModel):
             # Prevent division by zero (skip the first value as numerator)
             if any(x == 0 for x in self.inputs[1:]):
                 raise ValueError("Cannot divide by zero")
+            
+        if self.type == CalculationType.ROOT:
+            # Prevent root being zero
+            if any(x == 0 for x in self.inputs[1:]):
+                raise ValueError("Cannot take zeroth root")
+        
+            # prevent root being negative
+            if any(x < 0 for x in self.inputs[1:]):
+                raise ValueError("Cannot take root with a negative degree")
         return self
 
     model_config = ConfigDict(

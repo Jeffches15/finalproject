@@ -166,6 +166,14 @@ def root(a: Number, b: Number) -> float:
     ...
     ValueError: Cannot take root with a negative degree.
     """
+    # Check if root is zero
+    if b == 0:
+        # Raise a ValueError with a descriptive message
+        raise ValueError("Cannot take zeroth root")
+    
+    # Check if root is negative
+    if b < 0:
+        raise ValueError("Cannot take root with a negative degree")
 
     result = a ** (1 / b)
     return result
