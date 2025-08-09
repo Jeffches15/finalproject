@@ -7,6 +7,8 @@ from sqlalchemy.orm.session import Session
 import importlib
 import sys
 
+from app.database import get_db
+
 DATABASE_MODULE = "app.database"
 
 @pytest.fixture
@@ -53,3 +55,22 @@ def test_get_sessionmaker(mock_settings):
     engine = database.get_engine()
     SessionLocal = database.get_sessionmaker(engine)
     assert isinstance(SessionLocal, sessionmaker)
+
+
+import pytest
+from sqlalchemy.orm import Session
+
+def test_get_db_yields_and_closes_session():
+    # Create the generator
+    gen = get_db()
+
+    # Step 1: Get the yielded session
+    db = next(gen)
+    assert isinstance(db, Session), "get_db should yield a SQLAlchemy Session"
+
+    # Step 2: Close the generator so `finally` runs
+    gen.close()  # This triggers db.close()
+
+    # Step 3: Verify the session is closed
+    with pytest.raises(Exception):
+        db.execute("SELECT 1")
