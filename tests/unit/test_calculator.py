@@ -2,7 +2,7 @@
 
 import pytest  # Import the pytest framework for writing and running tests
 from typing import Union  # Import Union for type hinting multiple possible types
-from app.operations import add, exponent, subtract, multiply, divide  # Import the calculator functions from the operations module
+from app.operations import add, exponent, root, subtract, multiply, divide  # Import the calculator functions from the operations module
 
 # Define a type alias for numbers that can be either int or float
 Number = Union[int, float]
@@ -288,3 +288,53 @@ def test_exponentiation(a: Number, b: Number, expected: Number) -> None:
     
     # Assert that the result of exponent(a, b) matches the expected value
     assert result == expected, f"Expected exponent({a}, {b}) to be {expected}, but got {result}"
+
+
+# Tests the standalone function in operations.py: def root 
+    # result = a ** (1 / b)
+    # return result
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (9, 2, 3.0),             # square root of 9
+        (27, 3, 3.0),            # cube root of 27
+        (16, 4, 2.0),            # fourth root of 16
+        (81.0, 2, 9.0),          # float radicand, square root
+        (0, 2, 0.0),             # zero radicand, square root
+        (1, 5, 1.0),             # 5th root of 1 is 1
+    ],
+    ids=[
+        "square_root",
+        "cube_root",
+        "fourth_root",
+        "float_square_root",
+        "zero_square_root",
+        "fifth_root_of_one",
+    ]
+)
+def test_root(a: Number, b: Number, expected: Number) -> None:
+    """
+    Test the 'root' function in operations.py
+
+    This parameterized test checks that the 'root' function correctly computes
+    the root of a number
+
+    Parameters:
+    - a (Number): The base number.
+    - b (Number): The root.
+    - expected (Number): The expected result of root.
+
+    Steps:
+    1. Call 'root(a, b)'.
+    2. Assert the result matches 'expected'.
+
+    Example:
+    >>> test_root(64, 2, 8)
+    >>> test_root(144, 2, 12)
+    """
+
+    # Call the 'root' function with the provided arguments
+    result = root(a, b)
+    
+    # Assert that the result of root(a, b) matches the expected value
+    assert result == expected, f"Expected root({a}, {b}) to be {expected}, but got {result}"
