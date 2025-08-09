@@ -301,6 +301,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       case 'exponentiation':
         result = inputs.reduce((a, b, i) => i === 0 ? a : a ** b, inputs[0]);
         break;
+      case 'root':
+        // Cant take zeroth root
+        if (inputs.some((value, index) => index > 0 && value === 0)) {
+          return 'Cant take zeroth root'
+        }
+        else if (inputs.some((value, index) => index > 0 && value < 0)) {
+          return 'Cant take root with a negative degree'
+        }
+        result = inputs.reduce((a, b, i) => i === 0 ? a : a ** (1 / b), inputs[0])
+        break;
       default:
         return 'Unknown operation';
     }
@@ -339,6 +349,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
       case 'exponentiation':
         operator = '**';
+        break;
+      case 'root':
+        operator = '√';
         break;
       default:
         operator = '?';
