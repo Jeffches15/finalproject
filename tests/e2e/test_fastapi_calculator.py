@@ -313,6 +313,31 @@ def test_create_calculation_exponentiation(base_url: str):
     # Expected result: 3 ^ 2 ^ 2 = 81
     assert "result" in data and data["result"] == 81, f"Expected result 81, got {data.get('result')}"
 
+# simulating creating a root calculation
+def test_create_calculation_root(base_url: str):
+    user_data = {
+        "first_name": "Ms",
+        "last_name": "Exponents",
+        "email": f"Exponent{uuid4()}@example.com",
+        "username": f"exponent_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "root",
+        "inputs": [64, 2, 3],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 201, f"Root calculation creation failed: {response.text}"
+    data = response.json()
+    # Expected result: 64 √ 2 √ 3 = 2
+    assert "result" in data and data["result"] == 2, f"Expected result 2, got {data.get('result')}"
+
 # ---------------------------------------------------------------------------
 # Direct Model Tests for Calculation Operations
 # ---------------------------------------------------------------------------
@@ -354,6 +379,23 @@ def test_model_exponentiation():
     calc = Calculation.create("exponentiation", dummy_user_id, [3, 2, 2])
     result = calc.get_result()
     assert result == 81, f"Exponentiation result incorrect: expected 81, got {result}"
+
+# Dynamically create a Root instance
+def test_model_root():
+    dummy_user_id = uuid4()
+    calc = Calculation.create("root", dummy_user_id, [64, 2, 3])
+    result = calc.get_result()
+    assert result == 2, f"Root result incorrect: expected 2, got {result}"
+    
+    # Test root being a zero error
+    with pytest.raises(ValueError):
+        calc_zero = Calculation.create("root", dummy_user_id, [64, 0])
+        calc_zero.get_result()
+
+    # Test root being a negative number error
+    with pytest.raises(ValueError):
+        calc_zero = Calculation.create("root", dummy_user_id, [64, -2])
+        calc_zero.get_result()
 
 
 # ---------------------------------------------------------------------------
