@@ -3,7 +3,9 @@ from pydantic import ValidationError
 from uuid import uuid4
 from datetime import datetime
 from app.schemas.calculation import (
+    CalculationBase,
     CalculationCreate,
+    CalculationType,
     CalculationUpdate,
     CalculationResponse
 )
@@ -97,3 +99,31 @@ def test_calculation_response_valid():
     assert calc_response.type == "subtraction"
     assert calc_response.inputs == [20, 5]
     assert calc_response.result == 15.5
+
+def test_validate_inputs_division_by_zero():
+    with pytest.raises(ValidationError) as exc_info:
+        CalculationBase(type=CalculationType.DIVISION, inputs=[10.0, 0, 5])
+
+    errors = exc_info.value.errors()
+    print(errors)  # For debug, you can remove later
+
+    assert any("cannot divide by zero" in e['msg'].lower() for e in errors)
+
+def test_validate_inputs_root_zeroth_root():
+    with pytest.raises(ValidationError) as exc_info:
+        CalculationBase(type=CalculationType.ROOT, inputs=[16, 0])
+
+    errors = exc_info.value.errors()
+    print(errors)
+
+    assert any("zeroth root" in e['msg'].lower() for e in errors)
+
+
+def test_validate_inputs_root_negative_degree():
+    with pytest.raises(ValidationError) as exc_info:
+        CalculationBase(type=CalculationType.ROOT, inputs=[16, -2])
+
+    errors = exc_info.value.errors()
+    print(errors)
+
+    assert any("negative degree" in e['msg'].lower() for e in errors)
