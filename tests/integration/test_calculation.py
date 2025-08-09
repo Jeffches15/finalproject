@@ -8,6 +8,7 @@ from app.models.calculation import (
     Subtraction,
     Multiplication,
     Division,
+    Root
 )
 
 # Helper function to create a dummy user_id for testing.
@@ -90,6 +91,53 @@ def test_exponentiation_raises_if_less_than_two_inputs():
     with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
         exp.get_result()
 
+# tests Root class method: Root.get_result()
+# references calculation.py
+def test_root_get_result():
+    """
+    Test that Root.get_result returns the correct result
+    """
+    inputs = [64, 2, 3]
+    root = Root(user_id=dummy_user_id(), inputs=inputs)
+
+    # Expected: 64 √ 2 √ 3 = 2
+    result = root.get_result()
+    assert result == 2, f"Expected 2, got {result}"
+
+# if not isinstance(self.inputs, list):
+            # raise ValueError("Inputs must be a list of numbers.")
+def test_root_raises_if_inputs_not_list():
+    root = Root()
+    root.inputs = 5  # Not a list
+    with pytest.raises(ValueError, match="Inputs must be a list of numbers."):
+        root.get_result()
+
+# if len(self.inputs) < 2:
+            # raise ValueError("Inputs must be a list with at least two numbers.")    
+def test_root_raises_if_less_than_two_inputs():
+    root = Root()
+    root.inputs = [2]  # Only one number
+    with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
+        root.get_result()
+
+def test_root_being_a_zero():
+    """
+    Test that Root.get_result raises ValueError when: Cannot take zeroth root.
+    """
+    inputs = [50, 0, 5]
+    root = Root(user_id=dummy_user_id(), inputs=inputs)
+    with pytest.raises(ValueError, match="Cannot take zeroth root."):
+        root.get_result()
+
+def test_root_being_a_negative_number():
+    """
+    Test that Root.get_result raises ValueError when: cannot take root with a negative degree.
+    """
+    inputs = [50, -4]
+    root = Root(user_id=dummy_user_id(), inputs=inputs)
+    with pytest.raises(ValueError, match="Cannot take root with a negative degree."):
+        root.get_result()
+
 
 def test_calculation_factory_addition():
     """
@@ -163,6 +211,23 @@ def test_calculation_factory_exponent():
     # Expected: 5 ^ 2 ^ 2 = 625
     assert isinstance(calc, Exponentiation), "Factory did not return a Exponentiation instance."
     assert calc.get_result() == 625, "Incorrect exponentiation result."
+
+# Checks both:
+    # That the returned object is an instance of Root.
+    # That the result is correct (8).
+def test_calculation_factory_root():
+    """
+    Test the Calculation.create factory method for root.
+    """
+    inputs = [64, 2]
+    calc = Calculation.create(
+        calculation_type='root',
+        user_id=dummy_user_id(),
+        inputs=inputs,
+    )
+    # Expected: 64 √ 2 = 8
+    assert isinstance(calc, Root), "Factory did not return a Root instance."
+    assert calc.get_result() == 8, "Incorrect root result."
     
 
 def test_calculation_factory_invalid_type():
@@ -207,3 +272,11 @@ def test_invalid_inputs_for_exponentiation():
     exponentiation = Exponentiation(user_id=dummy_user_id(), inputs=[10])
     with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
         exponentiation.get_result()
+
+def test_invalid_inputs_for_root():
+    """
+    Test that providing fewer than two numbers to Root.get_result raises a ValueError.
+    """
+    root = Root(user_id=dummy_user_id(), inputs=[10])
+    with pytest.raises(ValueError, match="Inputs must be a list with at least two numbers."):
+        root.get_result()
