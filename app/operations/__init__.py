@@ -140,3 +140,32 @@ def exponent(a: Number, b: Number) -> float:
     # Perform exponentiation of a and b
     result = a ** b
     return result
+
+def root(a: Number, b: Number) -> float:
+    """
+    Take the root of the first number using the second number as the degree,  
+    and return the result.
+
+    Parameters:
+    - a (int or float): The number to take the root of (the radicand)
+    - b (int or float): The degree of the root
+
+    Returns:
+    - int or float: the result of taking the b-th root of a
+
+    Example:
+    >>> root(9, 2)
+    3.0
+    >>> root(14.5, 3)
+    2.4385
+    >>> root(8, 0)
+    ... 
+    ValueError: Cannot take zeroth root.
+
+    >>> root(9, -2)
+    ...
+    ValueError: Cannot take root with a negative degree.
+    """
+
+    result = a ** (1 / b)
+    return result
