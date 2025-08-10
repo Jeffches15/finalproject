@@ -1,9 +1,12 @@
 # 📦 Project Setup
 
 ## GitHub Actions successful run screenshot:
+![success github actions](./screenshots/github%20actions.png)
 
 ## Screenshots of successful Docker image deployment:
+![success docker image deployment](./screenshots/docker%20image1.png)
 
+![success docker image deployment](./screenshots/docker%20image2.png)
 
 ## Docker Hub repository link:
 https://hub.docker.com/r/jeffches15/finalproject
@@ -51,6 +54,16 @@ Running 'pytest' runs every test function in every test file, but I split this u
 
 **Note:** -s: show print/log output: tells pytest not to capture stdout/sterr, so print() statements and logging messages are shown immediately in the terminal -v: verbose output: shows the full name and their individual results (e.g., PASSED, FAILED) of each test function instead of just a dot (.)
 
+## Screenshots of BREAD operations:
+![Browse](./screenshots/Browse.png)
+
+![Read](./screenshots/Read.png)
+
+![Edit](./screenshots/Edit.png)
+
+![Add](./screenshots/Add.png)
+
+![Delete](./screenshots/Delete.png)
 
 # 🧩 1. Install Homebrew (Mac Only)
 
